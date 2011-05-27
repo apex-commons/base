@@ -15,11 +15,11 @@ private class LanguageUtilsTest {
     private static testmethod void testGetLangCodeByHttpParam(){
         //test: global static String getLangCodeByHttpParam(){
         System.assertNotEquals('es', LanguageUtils.getLangCodeByHttpParam());  
-        PageUtils.param('l','XXXXXXXX');
+        ApexPages.currentPage().getParameters().put('l','XXXXXXXX');
         System.assertNotEquals('es', LanguageUtils.getLangCodeByHttpParam());  
-        PageUtils.param('l','es');
+        ApexPages.currentPage().getParameters().put('l','es');
         System.assertEquals('es', LanguageUtils.getLangCodeByHttpParam()); 
-        PageUtils.param('l','nl');
+        ApexPages.currentPage().getParameters().put('l','nl');
         System.assertEquals('nl-nl', LanguageUtils.getLangCodeByHttpParam()); 
     }
     
@@ -53,21 +53,21 @@ private class LanguageUtilsTest {
         System.assertNotEquals('es', LanguageUtils.getLangCodeByHttpParamOrIfNullThenBrowser());  
         ApexPages.currentPage().getHeaders().put('Accept-Language','zh');
         System.assertEquals('zh-cn', LanguageUtils.getLangCodeByHttpParamOrIfNullThenBrowser());  
-        PageUtils.param('l','es');
+        ApexPages.currentPage().getParameters().put('l','es');
         System.assertEquals('es', LanguageUtils.getLangCodeByHttpParamOrIfNullThenBrowser());  
     }
 
     private static testmethod void testGetLangCodeByHttpParamOrIfNullThenUser(){
         //test: global static String getLangCodeByHttpParamOrIfNullThenUser(){
         System.assertEquals(UserInfo.getLanguage(), LanguageUtils.getLangCodeByHttpParamOrIfNullThenUser());  
-        PageUtils.param('l','es');
+        ApexPages.currentPage().getParameters().put('l','es');
         System.assertEquals('es', LanguageUtils.getLangCodeByHttpParamOrIfNullThenUser());  
     }
 
     private static testmethod void testGetLangCodeByBrowserOrIfNullThenHttpParam(){
         //test: global static String getLangCodeByBrowserOrIfNullThenHttpParam(){
         System.assertNotEquals('es', LanguageUtils.getLangCodeByBrowserOrIfNullThenHttpParam());  
-        PageUtils.param('l','es');
+        ApexPages.currentPage().getParameters().put('l','es');
         System.assertEquals('es', LanguageUtils.getLangCodeByBrowserOrIfNullThenHttpParam());  
         ApexPages.currentPage().getHeaders().put('Accept-Language','zh-cn');
         System.assertEquals('zh-cn', LanguageUtils.getLangCodeByBrowserOrIfNullThenHttpParam());  
@@ -98,30 +98,6 @@ private class LanguageUtilsTest {
 
 		//test default substitution; ie nl => nl_nl
         System.assertEquals('Tsjechisch', LanguageUtils.getLanguageName('nl','cs'));  
-    }
-    
-    private static testmethod void testGetAllLanguageSelectOptions(){
-    	//test: global static List<SelectOption> getAllLanguageSelectOptions(){
-    	final List<SelectOption> languages = LanguageUtils.getAllLanguageSelectOptions();
-    	System.assertNotEquals(null,languages);
-    	System.assertNotEquals(null,languages.get(0));
-    	System.assertEquals('Chinese (Simplified)',languages.get(0).getLabel());
-    	System.assertNotEquals(null,languages.get(1));
-    	System.assertEquals('Chinese (Traditional)',languages.get(1).getLabel());
-    	System.assertNotEquals(null,languages.get(2));
-    	System.assertEquals('Czech',languages.get(2).getLabel());
-    }
-    
-    private static testmethod void testGetAllLanguageSelectOptions2(){
-    	//test: global static List<SelectOption> getAllLanguageSelectOptions(String displayLanguageCode){
-    	final List<SelectOption> languages = LanguageUtils.getAllLanguageSelectOptions('ru');
-    	System.assertNotEquals(null,languages);
-    	System.assertNotEquals(null,languages.get(0));
-    	System.assertEquals('Английский (США)',languages.get(0).getLabel());
-    	System.assertNotEquals(null,languages.get(1));
-    	System.assertEquals('Венгерский',languages.get(1).getLabel());
-    	System.assertNotEquals(null,languages.get(2));
-    	System.assertEquals('Голландский',languages.get(2).getLabel());
     }
     
     private static testmethod void testgetAllLanguages(){

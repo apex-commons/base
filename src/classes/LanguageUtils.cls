@@ -47,23 +47,26 @@ global class LanguageUtils {
     
 
     global static String getLangCodeByHttpParam(){
+    	String returnValue = null;
         final Set<String> LANGUAGE_CODE_SET = getSuppLangCodeSet();
-        String LANGUAGE_HTTP_PARAMETER = 
-            StringUtils.lowerCase(
-                StringUtils.replaceChars( 
-                    PageUtils.param(HTTP_LANGUAGE_CODE_PARAMETER_KEY)
-                    , '_' //underscore
-                    , '-' //dash
-                )
-            );
-        if(DEFAULTS.containsKey(LANGUAGE_HTTP_PARAMETER)){
-            LANGUAGE_HTTP_PARAMETER = DEFAULTS.get(LANGUAGE_HTTP_PARAMETER);
+        if(ApexPages.currentPage() != null && ApexPages.currentPage().getParameters() != null){
+	        String LANGUAGE_HTTP_PARAMETER = 
+	            StringUtils.lowerCase(
+	                StringUtils.replaceChars( 
+	                    ApexPages.currentPage().getParameters().get(HTTP_LANGUAGE_CODE_PARAMETER_KEY)
+	                    , '_' //underscore
+	                    , '-' //dash
+	                )
+	            );
+	        if(DEFAULTS.containsKey(LANGUAGE_HTTP_PARAMETER)){
+	            LANGUAGE_HTTP_PARAMETER = DEFAULTS.get(LANGUAGE_HTTP_PARAMETER);
+	        }
+	        if(StringUtils.isNotBlank(LANGUAGE_HTTP_PARAMETER)
+	            && SUPPORTED_LANGUAGE_CODES.contains(LANGUAGE_HTTP_PARAMETER)){
+	            returnValue = LANGUAGE_HTTP_PARAMETER;
+	        }        
         }
-        if(StringUtils.isNotBlank(LANGUAGE_HTTP_PARAMETER)
-            && SUPPORTED_LANGUAGE_CODES.contains(LANGUAGE_HTTP_PARAMETER)){
-            return LANGUAGE_HTTP_PARAMETER;
-        }        
-        return null;
+        return returnValue;
     }
 
     global static String getLangCodeByBrowser(){
@@ -136,34 +139,12 @@ global class LanguageUtils {
 		return translatedLanguageNames.get(filterLanguageCode(displayLanguageCode)).get(filterLanguageCode(languageCode));
 	}
 	
-	global static List<SelectOption> getAllLanguageSelectOptions(){
-		return getAllLanguageSelectOptions(DEFAULT_LANGUAGE_CODE);
-	}
-	
-	global static List<SelectOption> getAllLanguageSelectOptions(String displayLanguageCode){
-		return mapToSelectOptions(getAllLanguages(displayLanguageCode));
-	}
-	
 	global static Map<String,String> getAllLanguages(){
 		return getAllLanguages(DEFAULT_LANGUAGE_CODE);
 	}
 	
 	global static Map<String,String> getAllLanguages(String displayLanguageCode){
 		return translatedLanguageNames.get(filterLanguageCode(displayLanguageCode));
-	}
-	
-	global static List<SelectOption> mapToSelectOptions(Map<String,String> theMap){
-		final List<SelectOption> options = new List<SelectOption>();
-		if(theMap != null){
-			for(String key : theMap.keySet()){
-				options.add(new SelectOption(key,theMap.get(key)));
-			}
-		}
-		return sortOptions(options);
-	}	
-	
-	private static List<SelectOption> sortOptions(List<SelectOption> theList){
-		return SelectOptionComparator.sort(theList,true,true);	
 	}
 	
 	private static String filterLanguageCode(String displayLanguageCode){

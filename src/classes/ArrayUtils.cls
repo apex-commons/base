@@ -119,7 +119,7 @@ global class ArrayUtils {
         if(array1 == null){ return array2; }
         if(array2 == null){ return array1; }
         if(array1.size() <= 0){ return array2; }
-        List<SObject> merged = createEmptySObjectList(array1[0]);
+        List<SObject> merged = new List<SObject>();
         for(SObject sObj : array1){ merged.add(sObj); }
         for(SObject sObj : array2){ merged.add(sObj); }
         return merged;
@@ -148,7 +148,7 @@ global class ArrayUtils {
     }
     
     global static Object[] pluck(SObject[] objectArray, String fieldName){
-        if(isEmpty(objectArray) || StringUtils.isBlank(fieldName)){
+        if(isEmpty(objectArray) || fieldName == null || fieldName.trim() == null || fieldName.trim().length() == 0){
             return new Object[]{};
         }
         Object[] plucked = new Object[objectArray.size()];
@@ -215,22 +215,6 @@ global class ArrayUtils {
         }
     }
     
-    /**
-     * This method is no longer needed as in Spring '10, you can created
-     * generic SObject lists.
-     * 
-     * @deprecated
-     */
-    global static List<SObject> createEmptySObjectList(SObject prototype){
-        if(prototype == null){
-            return null;
-        }
-        return Database.query(
-            'select Id from ' 
-            + StringUtils.split(''+prototype,':')[0] 
-            + ' where Id = \'0015000000Mrr40\' LIMIT 0'); // use dummy Id to ensure no return
-    }
-
     global static List<Object> merg(List<Object> list1, List<Object> list2) {
         List<Object> returnList = new List<Object>();
         if(list1 != null && list2 != null && (list1.size()+list2.size()) > MAX_NUMBER_OF_ELEMENTS_IN_LIST){
@@ -257,7 +241,7 @@ global class ArrayUtils {
         if(isEmpty(list1) && isEmpty(list2)){
             return null;
         }
-        List<SObject> returnList = createEmptySObjectList(isNotEmpty(list1) ? list1.get(0) : list2.get(0));
+        List<SObject> returnList = new List<SObject>();
         if(list1 != null){
             for(SObject elmt : list1){
                 returnList.add(elmt);
@@ -293,7 +277,7 @@ global class ArrayUtils {
     global static List<SObject> subset(List<SObject> list1, Integer startIndex, Integer count) {
         List<SObject> returnList = null;
         if(list1 != null && list1.size() > 0 && startIndex <= list1.size()-1 && count > 0){
-            returnList = createEmptySObjectList(list1.get(0));
+            returnList = new List<SObject>();
             for(Integer i = startIndex; i < list1.size() && i - startIndex < count; i++){
                 returnList.add(list1.get(i));
             }

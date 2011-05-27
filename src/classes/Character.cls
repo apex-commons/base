@@ -11,38 +11,25 @@
  */
 global class Character {
 
-    global static final IntegerRange UPPERCASE_ASCII_RANGE = new IntegerRange(65,90);
-    global static final IntegerRange LOWERCASE_ASCII_RANGE = new IntegerRange(97,122);
-    global static final IntegerRange DIGIT_ASCII_RANGE = new IntegerRange(48,57);
+    global static final Integer UPPERCASE_ASCII_MIN = 65;
+    global static final Integer UPPERCASE_ASCII_MAX = 90;
+    global static final Integer LOWERCASE_ASCII_MIN = 97;
+    global static final Integer LOWERCASE_ASCII_MAX = 122;
+    global static final Integer DIGIT_ASCII_MIN = 48;
+    global static final Integer DIGIT_ASCII_MAX = 57;
     
-    //global static final Integer COMBINING_SPACING_MARK = 1;
     global static final Integer CONNECTOR_PUNCTUATION = 2;
     global static final Integer CONTROL = 3;
     global static final Integer CURRENCY_SYMBOL = 4;
     global static final Integer DASH_PUNCTUATION = 5;
     global static final Integer DECIMAL_DIGIT_NUMBER = 6;
-    //global static final Integer ENCLOSING_MARK = 7;
     global static final Integer END_PUNCTUATION = 8;
-    //global static final Integer FINAL_QUOTE_PUNCTUATION = 9;
-    //global static final Integer FORMAT = 10;
-    //global static final Integer INITIAL_QUOTE_PUNCTUATION = 11;
-    //global static final Integer LETTER_NUMBER = 12;
-    //global static final Integer LINE_SEPARATOR = 13;
     global static final Integer LOWERCASE_LETTER = 14;
     global static final Integer MATH_SYMBOL = 15;
-    //global static final Integer MODIFIER_LETTER = 16;
     global static final Integer MODIFIER_SYMBOL = 17;
-    //global static final Integer NON_SPACING_MARK = 18;
-    //global static final Integer OTHER_LETTER = 19;
-    //global static final Integer OTHER_NUMBER = 20;
     global static final Integer OTHER_PUNCTUATION = 21;
-    //global static final Integer OTHER_SYMBOL = 22;
-    //global static final Integer PARAGRAPH_SEPARATOR = 23;
-    //global static final Integer PRIVATE_USE = 24;
     global static final Integer SPACE_SEPARATOR = 25;
     global static final Integer START_PUNCTUATION = 26;
-    //global static final Integer SURROGATE = 27;
-    //global static final Integer TITLECASE_LETTER = 28;
     global static final Integer UNASSIGNED = 29;
     global static final Integer UPPERCASE_LETTER = 30;
 
@@ -79,7 +66,7 @@ global class Character {
     }
     
     global static String toTitleCase(String ch){
-        if(inAsciiRange(ch,LOWERCASE_ASCII_RANGE)){
+        if(inAsciiRange(ch,LOWERCASE_ASCII_MIN,LOWERCASE_ASCII_MAX)){
             return toChar(toAscii(ch)-32);
         }
         return ch; 
@@ -90,26 +77,26 @@ global class Character {
     }
     
     global static String toLowerCase(String ch){
-        if(inAsciiRange(ch,UPPERCASE_ASCII_RANGE)){
+        if(inAsciiRange(ch,UPPERCASE_ASCII_MIN,UPPERCASE_ASCII_MAX)){
             return toChar(toAscii(ch)+32);
         }
         return ch; 
     }
     
     global static Boolean isUpperCase(String character){ 
-        return inAsciiRange(character,UPPERCASE_ASCII_RANGE); 
+        return inAsciiRange(character,UPPERCASE_ASCII_MIN,UPPERCASE_ASCII_MAX); 
     }
     
     global static Boolean isTitleCase(String character){ 
-        return inAsciiRange(character,UPPERCASE_ASCII_RANGE); 
+        return inAsciiRange(character,UPPERCASE_ASCII_MIN,UPPERCASE_ASCII_MAX); 
     }
     
     global static Boolean isLowerCase(String character){ 
-        return inAsciiRange(character,LOWERCASE_ASCII_RANGE); 
+        return inAsciiRange(character,LOWERCASE_ASCII_MIN,LOWERCASE_ASCII_MAX); 
     }
     
     global static Boolean isDigit(String character){ 
-        return inAsciiRange(character,DIGIT_ASCII_RANGE); 
+        return inAsciiRange(character,DIGIT_ASCII_MIN,DIGIT_ASCII_MAX); 
     }
 
     global static Boolean isLetter(String character){ 
@@ -147,25 +134,25 @@ global class Character {
     }
     
     global static boolean isAsciiAlpha(String character) {
-        return inAsciiRange(character,UPPERCASE_ASCII_RANGE) || inAsciiRange(character,LOWERCASE_ASCII_RANGE);
+        return isAsciiAlphaUpper(character) || isAsciiAlphaLower(character);
     }
     
     global static boolean isAsciiAlphaUpper(String character) {
-        return inAsciiRange(character,UPPERCASE_ASCII_RANGE);
+        return inAsciiRange(character,UPPERCASE_ASCII_MIN,UPPERCASE_ASCII_MAX); 
     }
     
     global static boolean isAsciiAlphaLower(String character) {
-        return inAsciiRange(character,LOWERCASE_ASCII_RANGE);
+        return inAsciiRange(character,LOWERCASE_ASCII_MIN,LOWERCASE_ASCII_MAX); 
     }
     
     global static boolean isAsciiNumeric(String character) {
-        return inAsciiRange(character,DIGIT_ASCII_RANGE);
+        return inAsciiRange(character,DIGIT_ASCII_MIN,DIGIT_ASCII_MAX); 
     }
     
     global static boolean isAsciiAlphanumeric(String character) {
-        return inAsciiRange(character,UPPERCASE_ASCII_RANGE) 
-            || inAsciiRange(character,LOWERCASE_ASCII_RANGE)
-            || inAsciiRange(character,DIGIT_ASCII_RANGE);
+        return isAsciiAlphaUpper(character) 
+            || isAsciiAlphaLower(character)
+            || isAsciiNumeric(character);
     }
         
     global static void validateChar(String character){
@@ -174,8 +161,13 @@ global class Character {
         }
     }
 
-    private static Boolean inAsciiRange(String character, IntegerRange range){
-        return range == null ? false : range.contains(toAscii(character));
+    private static Boolean inAsciiRange(String character, Integer lower, Integer upper){
+    	Boolean returnValue = false;
+    	if(lower != null && upper != null){
+    		final Integer asciiNum = toAscii(character);
+    		returnValue =  lower <= asciiNum && asciiNum <= upper;
+    	}
+        return returnValue;
     }
     
     static{
