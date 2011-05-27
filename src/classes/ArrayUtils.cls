@@ -9,7 +9,7 @@
  *      http://www.apache.org/licenses/LICENSE-2.0
  * ============================================================
  */
-global class ArrayUtils {
+global class ArrayUtils {   
     
     global static String[] EMPTY_STRING_ARRAY = new String[]{};
     global static Integer MAX_NUMBER_OF_ELEMENTS_IN_LIST {get{return 1000;}}
